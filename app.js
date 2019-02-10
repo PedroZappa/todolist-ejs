@@ -4,102 +4,41 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const ejsLint = require('ejs-lint');
 
 // App Init \\
 const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
 // EJS
 app.set('view engine', 'ejs');
 
+// Vars \\
+var items = ["Buy Food", "Cook Food", "Eat Food"];
+
 // ROUTING \\
-app.get("/", function(req, res) {
+app.get("/", (req, res) => {
 
   // Logic to test if current day is a weekend day
   var today = new Date();
-  var currentDay = today.getDay();
-  var day = "";
+  var options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  };
+  var day = today.toLocaleDateString("en-US", options);
+  res.render("list", {kindOfDay: day, newListItems: items});
+});
 
-  switch (currentDay) {
-    case 0:
-      day = "Sunday";
-      break;
-    case 1:
-      day = "Monday";
-      break;
-    case 2:
-      day = "Tueday";
-      break;
-    case 3:
-      day = "Wednsday";
-      break;
-    case 4:
-      day = "Thursday";
-      break;
-    case 5:
-      day = "Friday";
-      break;
-    case 6:
-      day = "Saturday";
-      break;
-    default:
-    console.log("Error, current day is equal to: " + currentDay);
-  }
-  // EJS printing method
-  res.render("list", {
-    kinfOfDay: day
-  });
+app.post("/", (req, res) => {
+  // Reset item var to inputted value
+  var item = req.body.newItem;
+  // Append new inputed items to items array
+  items.push(item);
+  // Redirects to .get("/") to render
+  res.redirect("/");
 });
 
 // Server Port \\
-app.listen(3000, function() {
+app.listen(3000, () => {
   console.log("Server's a spinnin' on Port 3000!");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-// var today = new Date();
-// var currentDay = today.getDay();
-// var day = "";
-// // Sunday - Saturday || 0 - 6
-// if (currentDay === 6 || currentDay === 0) {
-//   day = "Weekend";
-// } else {
-//   day = "Weekday";
-// }
-// // EJS printing method
-// res.render("list", {
-//   kinfOfDay: day
-// });
-
-
-// var today = new Date();
-// var currentDay = today.getDay();
-// var day = "";
-// // Sunday - Saturday || 0 - 6
-// if (currentDay === 0) {
-//   day = "Sunday";
-// } else if (currentDay === 1) {
-//   day = "Monday";
-// } else if (currentDay === 2) {
-//   day = "Tuesday";
-// } else if (currentDay === 3) {
-//   day = "Wednesday";
-// } else if (currentDay === 4) {
-//   day = "Thursday";
-// } else if (currentDay === 5) {
-//   day = "Friday";
-// } else if (currentDay === 6) {
-//   day = "Saturday";
-// }
-// // EJS printing method
-// res.render("list", {
-//   kinfOfDay: day
-// });
