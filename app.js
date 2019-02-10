@@ -9,29 +9,31 @@ const ejsLint = require('ejs-lint');
 // App Init \\
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
+// Static Directory 
+app.use(express.static("public"));
 // EJS
 app.set('view engine', 'ejs');
 
 // Vars \\
-var items = ["Buy Food", "Cook Food", "Eat Food"];
+let items = ["Buy Food", "Cook Food", "Eat Food"];
 
 // ROUTING \\
 app.get("/", (req, res) => {
 
   // Logic to test if current day is a weekend day
-  var today = new Date();
-  var options = {
+  let today = new Date();
+  let options = {
     weekday: "long",
     day: "numeric",
     month: "long"
   };
-  var day = today.toLocaleDateString("en-US", options);
+  let day = today.toLocaleDateString("en-US", options);
   res.render("list", {kindOfDay: day, newListItems: items});
 });
 
 app.post("/", (req, res) => {
   // Reset item var to inputted value
-  var item = req.body.newItem;
+  let item = req.body.newItem;
   // Append new inputed items to items array
   items.push(item);
   // Redirects to .get("/") to render
