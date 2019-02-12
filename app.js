@@ -8,16 +8,20 @@ const ejsLint = require('ejs-lint');
 
 // App Init \\
 const app = express();
-app.use(bodyParser.urlencoded({extended: true}));
-// Static Directory 
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+// Static Directory
 app.use(express.static("public"));
 // EJS
 app.set('view engine', 'ejs');
 
 // Vars \\
 let items = ["Buy Food", "Cook Food", "Eat Food"];
+let workItems = [];
 
 // ROUTING \\
+// Home \\
 app.get("/", (req, res) => {
 
   // Logic to test if current day is a weekend day
@@ -28,17 +32,36 @@ app.get("/", (req, res) => {
     month: "long"
   };
   let day = today.toLocaleDateString("en-US", options);
-  res.render("list", {kindOfDay: day, newListItems: items});
+  res.render("list", {
+    listTitle: day,
+    newListItems: items
+  });
 });
 
 app.post("/", (req, res) => {
-  // Reset item var to inputted value
   let item = req.body.newItem;
-  // Append new inputed items to items array
-  items.push(item);
-  // Redirects to .get("/") to render
-  res.redirect("/");
+  if (req.body.list === "Work") {
+    workItems.push(item);
+    res.redirect("/work");
+  } else {
+    workItems.push(item);
+    res.redirect("/");
+  }
 });
+
+// Work \\
+app.get("/work", (req, res) => {
+  res.render("list", {
+    listTitle: "Work List",
+    newListItems: workItems
+  });
+});
+
+app.get("/about", (req, res) => {
+  res.render("about");
+});
+
+
 
 // Server Port \\
 app.listen(3000, () => {
