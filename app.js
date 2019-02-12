@@ -5,9 +5,13 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const ejsLint = require('ejs-lint');
+// Local/Custom REQS \\
+const date = require(__dirname + "/date.js");
 
 // App Init \\
+// Express
 const app = express();
+// body-parser
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -16,22 +20,14 @@ app.use(express.static("public"));
 // EJS
 app.set('view engine', 'ejs');
 
-// Vars \\
-let items = ["Buy Food", "Cook Food", "Eat Food"];
-let workItems = [];
+// Arrays \\
+const items = ["Buy Food", "Cook Food", "Eat Food"];
+const workItems = [];
 
 // ROUTING \\
 // Home \\
 app.get("/", (req, res) => {
-
-  // Logic to test if current day is a weekend day
-  let today = new Date();
-  let options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  };
-  let day = today.toLocaleDateString("en-US", options);
+  const day = date.getDate();
   res.render("list", {
     listTitle: day,
     newListItems: items
@@ -39,12 +35,12 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  let item = req.body.newItem;
+  const item = req.body.newItem;
   if (req.body.list === "Work") {
     workItems.push(item);
     res.redirect("/work");
   } else {
-    workItems.push(item);
+    items.push(item);
     res.redirect("/");
   }
 });
